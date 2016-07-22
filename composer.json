@@ -2,6 +2,10 @@
 	"name": "afterlogic/aurora-module-admin-auth",
     	"version":"0.1.0",
     	"type": "aurora-module",
+    	"source": {
+            "url": "https://github.com/afterlogic/aurora-module-admin-auth",
+            "type": "git"
+        },
     	"dist":{
                "url":"https://github.com/afterlogic/aurora-module-admin-auth/archive/master.zip",
                 "type":"zip"
