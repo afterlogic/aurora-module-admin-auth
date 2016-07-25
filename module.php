@@ -41,7 +41,8 @@ class AdminAuthModule extends AApiModule
 		$oSettings =& CApi::GetSettings();
 		
 		$bCorrectEmptyPass = empty($sPassword) && empty($oSettings->GetConf('AdminPassword'));
-		$bCorrectPass = md5(trim($sPassword)) === $oSettings->GetConf('AdminPassword');
+		
+		$bCorrectPass = crypt(trim($sPassword), \CApi::$sSalt) === $oSettings->GetConf('AdminPassword');
 		
 		if ($sLogin === $oSettings->GetConf('AdminLogin') && ($bCorrectEmptyPass || $bCorrectPass))
 		{
