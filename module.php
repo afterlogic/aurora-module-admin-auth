@@ -16,14 +16,14 @@ class AdminAuthModule extends AApiModule
 	 * 
 	 * @param string $sLogin Login for checking.
 	 * 
-	 * @throws \System\Exceptions\ClientException
+	 * @throws \System\Exceptions\AuroraApiException
 	 */
 	public function checkAccountExists($sLogin)
 	{
 		$oSettings =& CApi::GetSettings();
 		if ($sLogin === $oSettings->GetConf('AdminLogin'))
 		{
-			throw new \System\Exceptions\ClientException(\System\Notifications::AccountExists);
+			throw new \System\Exceptions\AuroraApiException(\System\Notifications::AccountExists);
 		}
 	}
 
