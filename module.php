@@ -2,6 +2,7 @@
 
 class AdminAuthModule extends AApiModule
 {
+	/***** private functions *****/
 	/**
 	 * @return array
 	 */
@@ -51,4 +52,5 @@ class AdminAuthModule extends AApiModule
 			);
 		}
 	}
+	/***** private functions *****/
 }
