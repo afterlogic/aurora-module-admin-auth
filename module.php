@@ -52,18 +52,15 @@ class AdminAuthModule extends AApiModule
 	 * @param array $aParams Parameters contain the required credentials.
 	 * @param array|mixed $mResult Parameter is passed by reference for further filling with result. Result is the array with data for authentication token.
 	 */
-	public function checkAuth($aParams, &$mResult)
+	public function checkAuth($Login, $Password, $SignMe, &$mResult)
 	{
-		$sLogin = $aParams['Login'];
-		$sPassword = $aParams['Password'];
-		
 		$oSettings =& CApi::GetSettings();
 		
-		$bCorrectEmptyPass = empty($sPassword) && empty($oSettings->GetConf('AdminPassword'));
+		$bCorrectEmptyPass = empty($Password) && empty($oSettings->GetConf('AdminPassword'));
 		
-		$bCorrectPass = crypt(trim($sPassword), \CApi::$sSalt) === $oSettings->GetConf('AdminPassword');
+		$bCorrectPass = crypt(trim($Password), \CApi::$sSalt) === $oSettings->GetConf('AdminPassword');
 		
-		if ($sLogin === $oSettings->GetConf('AdminLogin') && ($bCorrectEmptyPass || $bCorrectPass))
+		if ($Login === $oSettings->GetConf('AdminLogin') && ($bCorrectEmptyPass || $bCorrectPass))
 		{
 			$mResult = array(
 				'token' => 'admin'
