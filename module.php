@@ -26,8 +26,8 @@ class AdminAuthModule extends AApiModule
 	 */
 	public function init()
 	{
-		$this->subscribeEvent('Login', array($this, 'checkAuth'));
-		$this->subscribeEvent('CheckAccountExists', array($this, 'checkAccountExists'));
+		$this->subscribeEvent('Login', array($this, 'onLogin'));
+		$this->subscribeEvent('CheckAccountExists', array($this, 'onCheckAccountExists'));
 	}
 
 	/**
@@ -37,10 +37,10 @@ class AdminAuthModule extends AApiModule
 	 * 
 	 * @throws \System\Exceptions\AuroraApiException
 	 */
-	public function checkAccountExists($sLogin)
+	public function onCheckAccountExists($aArgs)
 	{
 		$oSettings =& CApi::GetSettings();
-		if ($sLogin === $oSettings->GetConf('AdminLogin'))
+		if ($aArgs['Login'] === $oSettings->GetConf('AdminLogin'))
 		{
 			throw new \System\Exceptions\AuroraApiException(\System\Notifications::AccountExists);
 		}
@@ -52,15 +52,15 @@ class AdminAuthModule extends AApiModule
 	 * @param array $aParams Parameters contain the required credentials.
 	 * @param array|mixed $mResult Parameter is passed by reference for further filling with result. Result is the array with data for authentication token.
 	 */
-	public function checkAuth($Login, $Password, $SignMe, &$mResult)
+	public function onLogin(&$aArgs, &$mResult)
 	{
 		$oSettings =& CApi::GetSettings();
 		
-		$bCorrectEmptyPass = empty($Password) && empty($oSettings->GetConf('AdminPassword'));
+		$bCorrectEmptyPass = empty($aArgs['Password']) && empty($oSettings->GetConf('AdminPassword'));
 		
-		$bCorrectPass = crypt(trim($Password), \CApi::$sSalt) === $oSettings->GetConf('AdminPassword');
+		$bCorrectPass = crypt(trim($aArgs['Password']), \CApi::$sSalt) === $oSettings->GetConf('AdminPassword');
 		
-		if ($Login === $oSettings->GetConf('AdminLogin') && ($bCorrectEmptyPass || $bCorrectPass))
+		if ($aArgs['Login'] === $oSettings->GetConf('AdminLogin') && ($bCorrectEmptyPass || $bCorrectPass))
 		{
 			$mResult = array(
 				'token' => 'admin'
