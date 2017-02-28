@@ -20,7 +20,7 @@
 
 namespace Aurora\Modules;
 
-class AdminAuthModule extends \AApiModule
+class AdminAuthModule extends \Aurora\System\AbstractModule
 {
 	/***** private functions *****/
 	/**
@@ -41,7 +41,7 @@ class AdminAuthModule extends \AApiModule
 	 */
 	public function onCheckAccountExists($aArgs)
 	{
-		$oSettings =&\CApi::GetSettings();
+		$oSettings =&\Aurora\System\Api::GetSettings();
 		if ($aArgs['Login'] === $oSettings->GetConf('AdminLogin'))
 		{
 			throw new \System\Exceptions\AuroraApiException(\System\Notifications::AccountExists);
@@ -56,11 +56,11 @@ class AdminAuthModule extends \AApiModule
 	 */
 	public function onLogin(&$aArgs, &$mResult)
 	{
-		$oSettings =&\CApi::GetSettings();
+		$oSettings =&\Aurora\System\Api::GetSettings();
 		
 		$bCorrectEmptyPass = empty($aArgs['Password']) && empty($oSettings->GetConf('AdminPassword'));
 		
-		$bCorrectPass = crypt(trim($aArgs['Password']), \CApi::$sSalt) === $oSettings->GetConf('AdminPassword');
+		$bCorrectPass = crypt(trim($aArgs['Password']), \Aurora\System\Api::$sSalt) === $oSettings->GetConf('AdminPassword');
 		
 		if ($aArgs['Login'] === $oSettings->GetConf('AdminLogin') && ($bCorrectEmptyPass || $bCorrectPass))
 		{
