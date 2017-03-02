@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright Copyright (c) 2016, Afterlogic Corp.
+ * @copyright Copyright (c) 2017, Afterlogic Corp.
  * @license AGPL-3.0
  *
  * This code is free software: you can redistribute it and/or modify
@@ -37,14 +37,14 @@ class AdminAuthModule extends \Aurora\System\AbstractModule
 	 * 
 	 * @param string $sLogin Login for checking.
 	 * 
-	 * @throws \System\Exceptions\AuroraApiException
+	 * @throws \System\Exceptions\ApiException
 	 */
 	public function onCheckAccountExists($aArgs)
 	{
 		$oSettings =&\Aurora\System\Api::GetSettings();
 		if ($aArgs['Login'] === $oSettings->GetConf('AdminLogin'))
 		{
-			throw new \System\Exceptions\AuroraApiException(\System\Notifications::AccountExists);
+			throw new \System\Exceptions\ApiException(\System\Notifications::AccountExists);
 		}
 	}
 
