@@ -20,7 +20,7 @@
 
 namespace Aurora\Modules;
 
-class AdminAuthModule extends \Aurora\System\AbstractModule
+class AdminAuthModule extends \Aurora\System\Module\AbstractModule
 {
 	/***** private functions *****/
 	/**
@@ -37,14 +37,14 @@ class AdminAuthModule extends \Aurora\System\AbstractModule
 	 * 
 	 * @param string $sLogin Login for checking.
 	 * 
-	 * @throws \System\Exceptions\ApiException
+	 * @throws \Aurora\System\Exceptions\ApiException
 	 */
 	public function onCheckAccountExists($aArgs)
 	{
 		$oSettings =&\Aurora\System\Api::GetSettings();
 		if ($aArgs['Login'] === $oSettings->GetConf('AdminLogin'))
 		{
-			throw new \System\Exceptions\ApiException(\System\Notifications::AccountExists);
+			throw new \Aurora\System\Exceptions\ApiException(\Aurora\System\Notifications::AccountExists);
 		}
 	}
 
