@@ -67,6 +67,7 @@ class Module extends \Aurora\System\Module\AbstractModule
 			$mResult = array(
 				'token' => 'admin'
 			);
+			return true;
 		}
 	}
 	/***** private functions *****/
