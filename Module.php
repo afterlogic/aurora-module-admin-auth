@@ -21,7 +21,7 @@ class Module extends \Aurora\System\Module\AbstractModule
 	 */
 	public function init()
 	{
-		$this->subscribeEvent('Login', array($this, 'onLogin'));
+		$this->subscribeEvent('Login', array($this, 'onLogin'), 10);
 		$this->subscribeEvent('CheckAccountExists', array($this, 'onCheckAccountExists'));
 	}
 
