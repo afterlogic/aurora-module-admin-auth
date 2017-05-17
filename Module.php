@@ -24,6 +24,17 @@ class Module extends \Aurora\System\Module\AbstractModule
 		$this->subscribeEvent('Login', array($this, 'onLogin'), 10);
 		$this->subscribeEvent('CheckAccountExists', array($this, 'onCheckAccountExists'));
 	}
+	
+	/**
+	 * Return crypted password.
+	 * 
+	 * @param string $Password
+	 * @return string
+	 */
+	public function CryptPassword($Password)
+	{
+		return crypt(trim($Password), \Aurora\System\Api::$sSalt);
+	}
 
 	/**
 	 * Checks if superadmin has specified login.
@@ -53,7 +64,7 @@ class Module extends \Aurora\System\Module\AbstractModule
 		
 		$bCorrectEmptyPass = empty($aArgs['Password']) && empty($oSettings->GetConf('AdminPassword'));
 		
-		$bCorrectPass = crypt(trim($aArgs['Password']), \Aurora\System\Api::$sSalt) === $oSettings->GetConf('AdminPassword');
+		$bCorrectPass = $this->CryptPassword($aArgs['Password']) === $oSettings->GetConf('AdminPassword');
 		
 		if ($aArgs['Login'] === $oSettings->GetConf('AdminLogin') && ($bCorrectEmptyPass || $bCorrectPass))
 		{
