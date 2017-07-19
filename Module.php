@@ -61,8 +61,9 @@ class Module extends \Aurora\System\Module\AbstractModule
 	public function onLogin(&$aArgs, &$mResult)
 	{
 		$oSettings =&\Aurora\System\Api::GetSettings();
+		$sAdminPassword = $oSettings->GetConf('AdminPassword');
 		
-		$bCorrectEmptyPass = empty($aArgs['Password']) && empty($oSettings->GetConf('AdminPassword'));
+		$bCorrectEmptyPass = empty($aArgs['Password']) && empty($sAdminPassword);
 		
 		$bCorrectPass = $this->CryptPassword($aArgs['Password']) === $oSettings->GetConf('AdminPassword');
 		
