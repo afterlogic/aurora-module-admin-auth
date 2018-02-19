@@ -31,7 +31,7 @@ class Module extends \Aurora\System\Module\AbstractModule
 	 * @param string $Password
 	 * @return string
 	 */
-	public function CryptPassword($Password)
+	protected function CryptPassword($Password)
 	{
 		return crypt(trim($Password), \Aurora\System\Api::$sSalt);
 	}
@@ -65,7 +65,7 @@ class Module extends \Aurora\System\Module\AbstractModule
 		
 		$bCorrectEmptyPass = empty($aArgs['Password']) && empty($sAdminPassword);
 		
-		$bCorrectPass = $this->CryptPassword($aArgs['Password']) === $oSettings->GetConf('AdminPassword');
+		$bCorrectPass = $this->cryptPassword($aArgs['Password']) === $oSettings->GetConf('AdminPassword');
 		
 		if ($aArgs['Login'] === $oSettings->GetConf('AdminLogin') && ($bCorrectEmptyPass || $bCorrectPass))
 		{
