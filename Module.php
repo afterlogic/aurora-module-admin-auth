@@ -34,7 +34,7 @@ class Module extends \Aurora\System\Module\AbstractModule
 	 * @param string $Password
 	 * @return string
 	 */
-	protected function CryptPassword($Password)
+	public function CryptPassword($Password)
 	{
 		return crypt(trim($Password), \Aurora\System\Api::$sSalt);
 	}
