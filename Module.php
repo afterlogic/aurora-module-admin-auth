@@ -24,8 +24,8 @@ class Module extends \Aurora\System\Module\AbstractModule
 	 */
 	public function init()
 	{
-		$this->subscribeEvent('Login', array($this, 'onLogin'), 10);
-		$this->subscribeEvent('CheckAccountExists', array($this, 'onCheckAccountExists'));
+		$this->subscribeEvent('Core::Login', array($this, 'onLogin'), 10);
+		$this->subscribeEvent('Core::CheckAccountExists', array($this, 'onCheckAccountExists'));
 	}
 	
 	/**
@@ -76,7 +76,7 @@ class Module extends \Aurora\System\Module\AbstractModule
 				'token' => 'admin',
 				'id' => '-1'
 			);
-			return true;
+			return false;
 		}
 	}
 	/***** private functions *****/
