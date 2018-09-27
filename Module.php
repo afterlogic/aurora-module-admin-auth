@@ -70,12 +70,19 @@ class Module extends \Aurora\System\Module\AbstractModule
 		
 		$bCorrectPass = $this->cryptPassword($aArgs['Password']) === $oSettings->GetConf('AdminPassword');
 		
-		if ($aArgs['Login'] === $oSettings->GetConf('AdminLogin') && ($bCorrectEmptyPass || $bCorrectPass))
+		if ($aArgs['Login'] === $oSettings->GetConf('AdminLogin'))
 		{
-			$mResult = array(
-				'token' => 'admin',
-				'id' => '-1'
-			);
+			if ($bCorrectEmptyPass || $bCorrectPass)
+			{
+				$mResult = array(
+					'token' => 'admin',
+					'id' => '-1'
+				);
+			}
+			else
+			{
+				$mResult = false;
+			}
 			return true;
 		}
 	}
