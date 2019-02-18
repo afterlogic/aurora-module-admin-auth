@@ -49,7 +49,7 @@ class Module extends \Aurora\System\Module\AbstractModule
 	public function onCheckAccountExists($aArgs)
 	{
 		$oSettings =&\Aurora\System\Api::GetSettings();
-		if ($aArgs['Login'] === $oSettings->GetConf('AdminLogin'))
+		if ($aArgs['Login'] === $oSettings->AdminLogin)
 		{
 			throw new \Aurora\System\Exceptions\ApiException(\Aurora\System\Notifications::AccountExists);
 		}
@@ -64,13 +64,13 @@ class Module extends \Aurora\System\Module\AbstractModule
 	public function onLogin(&$aArgs, &$mResult)
 	{
 		$oSettings =&\Aurora\System\Api::GetSettings();
-		$sAdminPassword = $oSettings->GetConf('AdminPassword');
+		$sAdminPassword = $oSettings->AdminPassword;
 		
 		$bCorrectEmptyPass = empty($aArgs['Password']) && empty($sAdminPassword);
 		
-		$bCorrectPass = $this->cryptPassword($aArgs['Password']) === $oSettings->GetConf('AdminPassword');
+		$bCorrectPass = $this->cryptPassword($aArgs['Password']) === $oSettings->AdminPassword;
 		
-		if ($aArgs['Login'] === $oSettings->GetConf('AdminLogin'))
+		if ($aArgs['Login'] === $oSettings->AdminLogin)
 		{
 			if ($bCorrectEmptyPass || $bCorrectPass)
 			{
