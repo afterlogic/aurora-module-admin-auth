@@ -2,5 +2,11 @@
     "Disabled": [
 		false,
 		"bool"
-	]
+	],
+    "SuperadminWhitelistIp": [
+        [
+            "127.0.0.1"
+        ],
+        "array"
+    ]	
 }
