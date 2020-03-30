@@ -96,14 +96,14 @@ class Module extends \Aurora\System\Module\AbstractModule
 
 	protected function isClientIpInWhitelist()
 	{
-		$mResult = false;
+		$mResult = true;
 
 		$aWhitelistIp = $this->getConfig('SuperadminWhitelistIp', []);
 		$ip = \Aurora\System\Utils::getClientIp();
 					
-		if (!empty($ip) && count($aWhitelistIp) > 0 && in_array($ip, $aWhitelistIp))
+		if (!empty($ip) && count($aWhitelistIp) > 0 && !in_array($ip, $aWhitelistIp))
 		{
-			$mResult = true;
+			$mResult = false;
 		}
 
 		return $mResult;
