@@ -12,7 +12,7 @@ namespace Aurora\Modules\AdminAuth;
  *
  * @license https://www.gnu.org/licenses/agpl-3.0.html AGPL-3.0
  * @license https://afterlogic.com/products/common-licensing Afterlogic Software License
- * @copyright Copyright (c) 2019, Afterlogic Corp.
+ * @copyright Copyright (c) 2021, Afterlogic Corp.
  *
  * @package Modules
  */
@@ -38,6 +38,15 @@ class Module extends \Aurora\System\Module\AbstractModule
 	public function CryptPassword($Password)
 	{
 		return crypt(trim($Password), \Aurora\System\Api::$sSalt);
+	}
+
+	public function LoginAsSuperadmin($Login, $Password)
+	{
+		\Aurora\System\Api::checkUserRoleIsAtLeast(\Aurora\System\Enums\UserRole::Anonymous);
+
+		$aAuthData = self::Decorator()->Login($Login, $Password);
+
+		return \Aurora\Modules\Core\Module::Decorator()->SetAuthDataAndGetAuthToken($aAuthData);
 	}
 
 	public function Login($Login, $Password)
@@ -89,8 +98,9 @@ class Module extends \Aurora\System\Module\AbstractModule
 	 */
 	public function onLogin(&$aArgs, &$mResult)
 	{
+		$bAllowLoginFromCoreModule = $this->getConfig('AllowLoginFromCoreModule', false);
 		$oSettings =&\Aurora\System\Api::GetSettings();
-		if ($aArgs['Login'] === $oSettings->AdminLogin)
+		if ($bAllowLoginFromCoreModule && $aArgs['Login'] === $oSettings->AdminLogin)
 		{
 			$mResult = $this->Login($aArgs['Login'], $aArgs['Password']);
 			return true;
