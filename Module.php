@@ -125,7 +125,7 @@ class Module extends \Aurora\System\Module\AbstractModule
 	public function onBeforeRunEntry(&$aArgs, &$mResult)
 	{
 		$oAuthenticatedUser = \Aurora\System\Api::getAuthenticatedUser();
-		if ($oAuthenticatedUser instanceof \Aurora\Modules\Core\Classes\User &&
+		if ($oAuthenticatedUser instanceof \Aurora\Modules\Core\Models\User &&
 			$oAuthenticatedUser->Role === \Aurora\System\Enums\UserRole::SuperAdmin && !$this->isClientIpInWhitelist())
 		{
 			if (isset($aArgs['EntryName']) && strtolower($aArgs['EntryName']) === 'default')
