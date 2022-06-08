@@ -1,15 +1,26 @@
 {
-    "Disabled": [
-		false,
-		"bool"
-	],
-    "SuperadminWhitelistIp": [
-        [
-        ],
-        "array"
-    ],
-	"AllowLoginFromCoreModule": [
-		false,
-		"bool"
-	]
+  "Disabled": [
+    false,
+    "bool"
+  ],
+  "Disabled_Description": [
+    "",
+    "string"
+  ],
+  "SuperadminWhitelistIp": [
+    [],
+    "array"
+  ],
+  "SuperadminWhitelistIp_Description": [
+    "",
+    "string"
+  ],
+  "AllowLoginFromCoreModule": [
+    false,
+    "bool"
+  ],
+  "AllowLoginFromCoreModule_Description": [
+    "",
+    "string"
+  ]
 }
