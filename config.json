@@ -4,7 +4,7 @@
 		"bool"
 	],
 	"Disabled_Description": [
-		"",
+		"Setting to true disables the module",
 		"string"
 	],
 	"SuperadminWhitelistIp": [
@@ -12,7 +12,7 @@
 		"array"
 	],
 	"SuperadminWhitelistIp_Description": [
-		"",
+		"If non-empty, only listed IPs are allowed access from",
 		"string"
 	],
 	"AllowLoginFromCoreModule": [
@@ -20,7 +20,7 @@
 		"bool"
 	],
 	"AllowLoginFromCoreModule_Description": [
-		"",
+		"If set to true, superadmin account is allowed to log into main login page",
 		"string"
 	]
 }
