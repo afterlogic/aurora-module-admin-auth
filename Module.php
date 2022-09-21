@@ -46,26 +46,16 @@ class Module extends \Aurora\System\Module\AbstractModule
 	{
 		\Aurora\System\Api::checkUserRoleIsAtLeast(\Aurora\System\Enums\UserRole::Anonymous);
 
-		$sIp = \Aurora\System\Utils::getClientIp();
-		CoreModule::Decorator()->IsBlockedUser($Login, $sIp);
-
 		$aAuthData = self::Decorator()->Login($Login, $Password);
-
-		if (!$aAuthData) {
-			CoreModule::Decorator()->BlockUser($Login, $sIp);
-			CoreModule::Decorator()->IsBlockedUser($Login, $sIp);
-		} else {
-			$oBlockedUser = CoreModule::Decorator()->GetBlockedUser($Login, $sIp);
-			if ($oBlockedUser) {
-				$oBlockedUser->delete();
-			}
-		}
 
 		return \Aurora\Modules\Core\Module::Decorator()->SetAuthDataAndGetAuthToken($aAuthData);
 	}
 
 	public function Login($Login, $Password)
 	{
+		$sIp = \Aurora\System\Utils::getClientIp();
+		CoreModule::Decorator()->IsBlockedUser($Login, $sIp);
+
 		$mResult = false;
 		$oSettings =& \Aurora\System\Api::GetSettings();
 		if ($Login === $oSettings->AdminLogin)
@@ -83,6 +73,16 @@ class Module extends \Aurora\System\Module\AbstractModule
 						'id' => '-1'
 					];
 				}
+			}
+		}
+
+		if (!$mResult) {
+			CoreModule::Decorator()->BlockUser($Login, $sIp);
+			CoreModule::Decorator()->IsBlockedUser($Login, $sIp);
+		} else {
+			$oBlockedUser = CoreModule::Decorator()->GetBlockedUser($Login, $sIp);
+			if ($oBlockedUser) {
+				$oBlockedUser->delete();
 			}
 		}
 
