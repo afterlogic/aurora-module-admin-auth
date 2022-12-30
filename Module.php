@@ -31,7 +31,7 @@ class Module extends \Aurora\System\Module\AbstractModule
 
 	/***** private functions *****/
 	/**
-	 * @return array
+	 * @return void
 	 */
 	public function init()
 	{
