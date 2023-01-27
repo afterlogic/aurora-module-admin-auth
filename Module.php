@@ -20,160 +20,150 @@ use Aurora\Modules\Core\Module as CoreModule;
  */
 class Module extends \Aurora\System\Module\AbstractModule
 {
-	/**
-	 *
-	 * @return Module
-	 */
-	public static function getInstance()
-	{
-		return \Aurora\System\Api::GetModule(self::GetName());
-	}
+    /**
+     *
+     * @return Module
+     */
+    public static function getInstance()
+    {
+        return \Aurora\System\Api::GetModule(self::GetName());
+    }
 
-	/***** private functions *****/
-	/**
-	 * @return void
-	 */
-	public function init()
-	{
-		$this->subscribeEvent('Login', array($this, 'onLogin'), 10);
-		$this->subscribeEvent('CheckAccountExists', array($this, 'onCheckAccountExists'));
-		$this->subscribeEvent('System::RunEntry::before', array($this, 'onBeforeRunEntry'));
-	}
+    /***** private functions *****/
+    /**
+     * @return void
+     */
+    public function init()
+    {
+        $this->subscribeEvent('Login', array($this, 'onLogin'), 10);
+        $this->subscribeEvent('CheckAccountExists', array($this, 'onCheckAccountExists'));
+        $this->subscribeEvent('System::RunEntry::before', array($this, 'onBeforeRunEntry'));
+    }
 
-	/**
-	 * Return crypted password.
-	 *
-	 * @param string $Password
-	 * @return string
-	 */
-	public function CryptPassword($Password)
-	{
-		return crypt(trim($Password), \Aurora\System\Api::$sSalt);
-	}
+    /**
+     * Return crypted password.
+     *
+     * @param string $Password
+     * @return string
+     */
+    public function CryptPassword($Password)
+    {
+        return crypt(trim($Password), \Aurora\System\Api::$sSalt);
+    }
 
-	public function LoginAsSuperadmin($Login, $Password)
-	{
-		\Aurora\System\Api::checkUserRoleIsAtLeast(\Aurora\System\Enums\UserRole::Anonymous);
+    public function LoginAsSuperadmin($Login, $Password)
+    {
+        \Aurora\System\Api::checkUserRoleIsAtLeast(\Aurora\System\Enums\UserRole::Anonymous);
 
-		$aAuthData = self::Decorator()->Login($Login, $Password);
+        $aAuthData = self::Decorator()->Login($Login, $Password);
 
-		return \Aurora\Modules\Core\Module::Decorator()->SetAuthDataAndGetAuthToken($aAuthData);
-	}
+        return \Aurora\Modules\Core\Module::Decorator()->SetAuthDataAndGetAuthToken($aAuthData);
+    }
 
-	public function Login($Login, $Password)
-	{
-		$sIp = \Aurora\System\Utils::getClientIp();
-		CoreModule::Decorator()->IsBlockedUser($Login, $sIp);
+    public function Login($Login, $Password)
+    {
+        $sIp = \Aurora\System\Utils::getClientIp();
+        CoreModule::Decorator()->IsBlockedUser($Login, $sIp);
 
-		$mResult = false;
-		$oSettings =& \Aurora\System\Api::GetSettings();
-		if ($Login === $oSettings->AdminLogin)
-		{
-			if ($this->isClientIpInWhitelist())
-			{
-				$sAdminPassword = $oSettings->AdminPassword;
-				$bCorrectEmptyPass = empty($Password) && empty($sAdminPassword);
-				$bCorrectPass = $this->CryptPassword($Password) === $sAdminPassword;
+        $mResult = false;
+        $oSettings =& \Aurora\System\Api::GetSettings();
+        if ($Login === $oSettings->AdminLogin) {
+            if ($this->isClientIpInWhitelist()) {
+                $sAdminPassword = $oSettings->AdminPassword;
+                $bCorrectEmptyPass = empty($Password) && empty($sAdminPassword);
+                $bCorrectPass = $this->CryptPassword($Password) === $sAdminPassword;
 
-				if ($bCorrectEmptyPass || $bCorrectPass)
-				{
-					$mResult = [
-						'token' => 'admin',
-						'id' => '-1'
-					];
-				}
-			}
-		}
+                if ($bCorrectEmptyPass || $bCorrectPass) {
+                    $mResult = [
+                        'token' => 'admin',
+                        'id' => '-1'
+                    ];
+                }
+            }
+        }
 
-		if (!$mResult) {
-			CoreModule::Decorator()->BlockUser($Login, $sIp);
-			CoreModule::Decorator()->IsBlockedUser($Login, $sIp);
-		} else {
-			$oBlockedUser = CoreModule::Decorator()->GetBlockedUser($Login, $sIp);
-			if ($oBlockedUser) {
-				$oBlockedUser->delete();
-			}
-		}
+        if (!$mResult) {
+            CoreModule::Decorator()->BlockUser($Login, $sIp);
+            CoreModule::Decorator()->IsBlockedUser($Login, $sIp);
+        } else {
+            $oBlockedUser = CoreModule::Decorator()->GetBlockedUser($Login, $sIp);
+            if ($oBlockedUser) {
+                $oBlockedUser->delete();
+            }
+        }
 
-		return $mResult;
-	}
+        return $mResult;
+    }
 
-	/**
-	 * Checks if superadmin has specified login.
-	 *
-	 * @param string $sLogin Login for checking.
-	 *
-	 * @throws \Aurora\System\Exceptions\ApiException
-	 */
-	public function onCheckAccountExists($aArgs)
-	{
-		$oSettings =&\Aurora\System\Api::GetSettings();
-		if ($aArgs['Login'] === $oSettings->AdminLogin)
-		{
-			throw new \Aurora\System\Exceptions\ApiException(\Aurora\System\Notifications::AccountExists);
-		}
-	}
+    /**
+     * Checks if superadmin has specified login.
+     *
+     * @param string $sLogin Login for checking.
+     *
+     * @throws \Aurora\System\Exceptions\ApiException
+     */
+    public function onCheckAccountExists($aArgs)
+    {
+        $oSettings =&\Aurora\System\Api::GetSettings();
+        if ($aArgs['Login'] === $oSettings->AdminLogin) {
+            throw new \Aurora\System\Exceptions\ApiException(\Aurora\System\Notifications::AccountExists);
+        }
+    }
 
-	/**
-	 * Tries to log in with specified credentials.
-	 *
-	 * @param array $aParams Parameters contain the required credentials.
-	 * @param array|mixed $mResult Parameter is passed by reference for further filling with result. Result is the array with data for authentication token.
-	 */
-	public function onLogin(&$aArgs, &$mResult)
-	{
-		$bAllowLoginFromCoreModule = $this->getConfig('AllowLoginFromCoreModule', false);
-		$oSettings =&\Aurora\System\Api::GetSettings();
-		if ($bAllowLoginFromCoreModule && $aArgs['Login'] === $oSettings->AdminLogin)
-		{
-			$mResult = $this->Login($aArgs['Login'], $aArgs['Password']);
-			return true;
-		}
-	}
+    /**
+     * Tries to log in with specified credentials.
+     *
+     * @param array $aParams Parameters contain the required credentials.
+     * @param array|mixed $mResult Parameter is passed by reference for further filling with result. Result is the array with data for authentication token.
+     */
+    public function onLogin(&$aArgs, &$mResult)
+    {
+        $bAllowLoginFromCoreModule = $this->getConfig('AllowLoginFromCoreModule', false);
+        $oSettings =&\Aurora\System\Api::GetSettings();
+        if ($bAllowLoginFromCoreModule && $aArgs['Login'] === $oSettings->AdminLogin) {
+            $mResult = $this->Login($aArgs['Login'], $aArgs['Password']);
+            return true;
+        }
+    }
 
-	protected function isClientIpInWhitelist()
-	{
-		$mResult = true;
+    protected function isClientIpInWhitelist()
+    {
+        $mResult = true;
 
-		$aWhitelistIp = $this->getConfig('SuperadminWhitelistIp', []);
-		$ip = \Aurora\System\Utils::getClientIp();
+        $aWhitelistIp = $this->getConfig('SuperadminWhitelistIp', []);
+        $ip = \Aurora\System\Utils::getClientIp();
 
-		if (!empty($ip) && count($aWhitelistIp) > 0 && !in_array($ip, $aWhitelistIp))
-		{
-			$mResult = false;
-		}
+        if (!empty($ip) && count($aWhitelistIp) > 0 && !in_array($ip, $aWhitelistIp)) {
+            $mResult = false;
+        }
 
-		return $mResult;
-	}
+        return $mResult;
+    }
 
-	public function onBeforeRunEntry(&$aArgs, &$mResult)
-	{
-		$oAuthenticatedUser = \Aurora\System\Api::getAuthenticatedUser();
-		if ($oAuthenticatedUser instanceof \Aurora\Modules\Core\Models\User &&
-			$oAuthenticatedUser->Role === \Aurora\System\Enums\UserRole::SuperAdmin && !$this->isClientIpInWhitelist())
-		{
-			if (isset($aArgs['EntryName']) && strtolower($aArgs['EntryName']) === 'default')
-			{
-				\Aurora\Modules\Core\Module::Decorator()->Logout();
-			}
-			else
-			{
-				$mResult = \Aurora\System\Managers\Response::GetJsonFromObject(
-					'Json',
-					\Aurora\System\Managers\Response::ExceptionResponse(
-						'RunEntry',
-						new \Aurora\System\Exceptions\ApiException(
-							\Aurora\System\Notifications::AccessDenied,
-							null,
-							$this->i18N('ERROR_USER_ACCESS_DENIED'),
-							[],
-							$this
-						)
-					)
-				);
-				return true;
-			}
-		}
-	}
-	/***** private functions *****/
+    public function onBeforeRunEntry(&$aArgs, &$mResult)
+    {
+        $oAuthenticatedUser = \Aurora\System\Api::getAuthenticatedUser();
+        if ($oAuthenticatedUser instanceof \Aurora\Modules\Core\Models\User &&
+            $oAuthenticatedUser->Role === \Aurora\System\Enums\UserRole::SuperAdmin && !$this->isClientIpInWhitelist()) {
+            if (isset($aArgs['EntryName']) && strtolower($aArgs['EntryName']) === 'default') {
+                \Aurora\Modules\Core\Module::Decorator()->Logout();
+            } else {
+                $mResult = \Aurora\System\Managers\Response::GetJsonFromObject(
+                    'Json',
+                    \Aurora\System\Managers\Response::ExceptionResponse(
+                        'RunEntry',
+                        new \Aurora\System\Exceptions\ApiException(
+                            \Aurora\System\Notifications::AccessDenied,
+                            null,
+                            $this->i18N('ERROR_USER_ACCESS_DENIED'),
+                            [],
+                            $this
+                        )
+                    )
+                );
+                return true;
+            }
+        }
+    }
+    /***** private functions *****/
 }
