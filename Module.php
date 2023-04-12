@@ -29,6 +29,15 @@ class Module extends \Aurora\System\Module\AbstractModule
         return \Aurora\System\Api::GetModule(self::GetName());
     }
 
+    /**
+     *
+     * @return Module
+     */
+    public static function Decorator()
+    {
+        return parent::Decorator();
+    }
+
     /***** private functions *****/
     /**
      * @return void
@@ -98,7 +107,7 @@ class Module extends \Aurora\System\Module\AbstractModule
     /**
      * Checks if superadmin has specified login.
      *
-     * @param string $sLogin Login for checking.
+     * @param array $aArgs
      *
      * @throws \Aurora\System\Exceptions\ApiException
      */
@@ -113,7 +122,7 @@ class Module extends \Aurora\System\Module\AbstractModule
     /**
      * Tries to log in with specified credentials.
      *
-     * @param array $aParams Parameters contain the required credentials.
+     * @param array $aArgs Parameters contain the required credentials.
      * @param array|mixed $mResult Parameter is passed by reference for further filling with result. Result is the array with data for authentication token.
      */
     public function onLogin(&$aArgs, &$mResult)
