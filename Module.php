@@ -136,7 +136,7 @@ class Module extends \Aurora\System\Module\AbstractModule
      */
     public function onLogin(&$aArgs, &$mResult)
     {
-        $bAllowLoginFromCoreModule = $this->getConfig('AllowLoginFromCoreModule', false);
+        $bAllowLoginFromCoreModule = $this->getModuleSettings()->AllowLoginFromCoreModule;
         $oSettings =&\Aurora\System\Api::GetSettings();
         if ($bAllowLoginFromCoreModule && $aArgs['Login'] === $oSettings->AdminLogin) {
             $mResult = $this->Login($aArgs['Login'], $aArgs['Password']);
@@ -148,7 +148,7 @@ class Module extends \Aurora\System\Module\AbstractModule
     {
         $mResult = true;
 
-        $aWhitelistIp = $this->getConfig('SuperadminWhitelistIp', []);
+        $aWhitelistIp = $this->getModuleSettings()->SuperadminWhitelistIp;
         $ip = \Aurora\System\Utils::getClientIp();
 
         if (!empty($ip) && count($aWhitelistIp) > 0 && !in_array($ip, $aWhitelistIp)) {
