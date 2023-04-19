@@ -16,6 +16,8 @@ use Aurora\Modules\Core\Module as CoreModule;
  * @license https://afterlogic.com/products/common-licensing Afterlogic Software License
  * @copyright Copyright (c) 2023, Afterlogic Corp.
  *
+ * @property Settings $oModuleSettings
+ *
  * @package Modules
  */
 class Module extends \Aurora\System\Module\AbstractModule
@@ -136,7 +138,7 @@ class Module extends \Aurora\System\Module\AbstractModule
      */
     public function onLogin(&$aArgs, &$mResult)
     {
-        $bAllowLoginFromCoreModule = $this->getModuleSettings()->AllowLoginFromCoreModule;
+        $bAllowLoginFromCoreModule = $this->oModuleSettings->AllowLoginFromCoreModule;
         $oSettings =&\Aurora\System\Api::GetSettings();
         if ($bAllowLoginFromCoreModule && $aArgs['Login'] === $oSettings->AdminLogin) {
             $mResult = $this->Login($aArgs['Login'], $aArgs['Password']);
@@ -148,7 +150,7 @@ class Module extends \Aurora\System\Module\AbstractModule
     {
         $mResult = true;
 
-        $aWhitelistIp = $this->getModuleSettings()->SuperadminWhitelistIp;
+        $aWhitelistIp = $this->oModuleSettings->SuperadminWhitelistIp;
         $ip = \Aurora\System\Utils::getClientIp();
 
         if (!empty($ip) && count($aWhitelistIp) > 0 && !in_array($ip, $aWhitelistIp)) {
