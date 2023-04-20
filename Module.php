@@ -23,16 +23,14 @@ use Aurora\Modules\Core\Module as CoreModule;
 class Module extends \Aurora\System\Module\AbstractModule
 {
     /**
-     *
      * @return Module
      */
     public static function getInstance()
     {
-        return \Aurora\System\Api::GetModule(self::GetName());
+        return parent::getInstance();
     }
 
     /**
-     *
      * @return Module
      */
     public static function Decorator()
@@ -41,7 +39,6 @@ class Module extends \Aurora\System\Module\AbstractModule
     }
 
     /**
-     *
      * @return Settings
      */
     public function getModuleSettings()
