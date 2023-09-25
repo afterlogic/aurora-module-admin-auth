@@ -83,7 +83,7 @@ class Module extends \Aurora\System\Module\AbstractModule
         CoreModule::Decorator()->IsBlockedUser($Login, $sIp);
 
         $mResult = false;
-        $oSettings =& \Aurora\System\Api::GetSettings();
+        $oSettings = &\Aurora\System\Api::GetSettings();
         if ($Login === $oSettings->AdminLogin) {
             if ($this->isClientIpInWhitelist()) {
                 $sAdminPassword = $oSettings->AdminPassword;
@@ -121,7 +121,7 @@ class Module extends \Aurora\System\Module\AbstractModule
      */
     public function onCheckAccountExists($aArgs)
     {
-        $oSettings =&\Aurora\System\Api::GetSettings();
+        $oSettings = &\Aurora\System\Api::GetSettings();
         if ($aArgs['Login'] === $oSettings->AdminLogin) {
             throw new \Aurora\System\Exceptions\ApiException(\Aurora\System\Notifications::AccountExists);
         }
@@ -136,7 +136,7 @@ class Module extends \Aurora\System\Module\AbstractModule
     public function onLogin(&$aArgs, &$mResult)
     {
         $bAllowLoginFromCoreModule = $this->oModuleSettings->AllowLoginFromCoreModule;
-        $oSettings =&\Aurora\System\Api::GetSettings();
+        $oSettings = &\Aurora\System\Api::GetSettings();
         if ($bAllowLoginFromCoreModule && $aArgs['Login'] === $oSettings->AdminLogin) {
             $mResult = $this->Login($aArgs['Login'], $aArgs['Password']);
             return true;
