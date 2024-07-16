@@ -57,17 +57,6 @@ class Module extends \Aurora\System\Module\AbstractModule
         $this->subscribeEvent('System::RunEntry::before', array($this, 'onBeforeRunEntry'));
     }
 
-    /**
-     * Return crypted password.
-     *
-     * @param string $Password
-     * @return string
-     */
-    public function CryptPassword($Password)
-    {
-        return crypt(trim($Password), \Aurora\System\Api::GetHashSalt());
-    }
-
     public function LoginAsSuperadmin($Login, $Password)
     {
         \Aurora\System\Api::checkUserRoleIsAtLeast(\Aurora\System\Enums\UserRole::Anonymous);
@@ -88,7 +77,7 @@ class Module extends \Aurora\System\Module\AbstractModule
             if ($this->isClientIpInWhitelist()) {
                 $sAdminPassword = $oSettings->AdminPassword;
                 $bCorrectEmptyPass = empty($Password) && empty($sAdminPassword);
-                $bCorrectPass = $this->CryptPassword($Password) === $sAdminPassword;
+                $bCorrectPass = crypt(trim($Password), \Aurora\System\Api::GetHashSalt()) === $sAdminPassword;
 
                 if ($bCorrectEmptyPass || $bCorrectPass) {
                     $mResult = [
