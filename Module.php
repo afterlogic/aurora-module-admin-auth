@@ -63,7 +63,7 @@ class Module extends \Aurora\System\Module\AbstractModule
 
         $aAuthData = self::Decorator()->Login($Login, $Password);
 
-        return \Aurora\Modules\Core\Module::Decorator()->SetAuthDataAndGetAuthToken($aAuthData);
+        return CoreModule::Decorator()->SetAuthDataAndGetAuthToken($aAuthData);
     }
 
     public function Login($Login, $Password)
@@ -77,7 +77,7 @@ class Module extends \Aurora\System\Module\AbstractModule
             if ($this->isClientIpInWhitelist()) {
                 $sAdminPassword = $oSettings->AdminPassword;
                 $bCorrectEmptyPass = empty($Password) && empty($sAdminPassword);
-                $bCorrectPass = crypt(trim($Password), \Aurora\System\Api::GetHashSalt()) === $sAdminPassword;
+                $bCorrectPass = password_verify(trim($Password), $sAdminPassword);
 
                 if ($bCorrectEmptyPass || $bCorrectPass) {
                     $mResult = [
@@ -152,7 +152,7 @@ class Module extends \Aurora\System\Module\AbstractModule
         if ($oAuthenticatedUser instanceof \Aurora\Modules\Core\Models\User &&
             $oAuthenticatedUser->Role === \Aurora\System\Enums\UserRole::SuperAdmin && !$this->isClientIpInWhitelist()) {
             if (isset($aArgs['EntryName']) && strtolower($aArgs['EntryName']) === 'default') {
-                \Aurora\Modules\Core\Module::Decorator()->Logout();
+                CoreModule::Decorator()->Logout();
             } else {
                 $mResult = \Aurora\System\Managers\Response::GetJsonFromObject(
                     'Json',
