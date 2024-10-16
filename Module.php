@@ -63,7 +63,14 @@ class Module extends \Aurora\System\Module\AbstractModule
 
         $aAuthData = self::Decorator()->Login($Login, $Password);
 
-        return CoreModule::Decorator()->SetAuthDataAndGetAuthToken($aAuthData);
+        $mResult = CoreModule::Decorator()->SetAuthDataAndGetAuthToken($aAuthData);
+
+        $sXClientHeader = $this->oHttp->GetHeader('X-Client');
+        if ($mResult && isset($mResult['AuthToken']) && strtolower($sXClientHeader) === 'webclient') {
+            $mResult['AuthToken'] = true;
+        }
+
+        return $mResult;
     }
 
     public function Login($Login, $Password)
