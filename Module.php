@@ -151,24 +151,22 @@ class Module extends \Aurora\System\Module\AbstractModule
     public function onBeforeRunEntry(&$aArgs, &$mResult)
     {
         $oAuthenticatedUser = \Aurora\System\Api::getAuthenticatedUser();
-        if ($oAuthenticatedUser instanceof \Aurora\Modules\Core\Models\User &&
-            $oAuthenticatedUser->Role === \Aurora\System\Enums\UserRole::SuperAdmin && !$this->isClientIpInWhitelist()) {
+        if (
+            $oAuthenticatedUser instanceof \Aurora\Modules\Core\Models\User
+            && $oAuthenticatedUser->Role === \Aurora\System\Enums\UserRole::SuperAdmin
+            && !$this->isClientIpInWhitelist()
+        ) {
             if (isset($aArgs['EntryName']) && strtolower($aArgs['EntryName']) === 'default') {
                 CoreModule::Decorator()->Logout();
             } else {
-                $mResult = \Aurora\System\Managers\Response::GetJsonFromObject(
-                    'Json',
-                    \Aurora\System\Managers\Response::ExceptionResponse(
-                        'RunEntry',
-                        new \Aurora\System\Exceptions\ApiException(
-                            \Aurora\System\Notifications::AccessDenied,
-                            null,
-                            $this->i18N('ERROR_USER_ACCESS_DENIED'),
-                            [],
-                            $this
-                        )
-                    )
+                throw new \Aurora\System\Exceptions\ApiException(
+                    \Aurora\System\Notifications::AccessDenied,
+                    null,
+                    $this->i18N('ERROR_USER_ACCESS_DENIED'),
+                    [],
+                    $this
                 );
+                // aborting the RunEntry execution stack
                 return true;
             }
         }
