@@ -65,11 +65,6 @@ class Module extends \Aurora\System\Module\AbstractModule
 
         $mResult = CoreModule::Decorator()->SetAuthDataAndGetAuthToken($aAuthData);
 
-        $sXClientHeader = $this->oHttp->GetHeader('X-Client');
-        if ($mResult && isset($mResult['AuthToken']) && strtolower($sXClientHeader) === 'webclient') {
-            $mResult['AuthToken'] = true;
-        }
-
         return $mResult;
     }
 
