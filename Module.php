@@ -63,14 +63,14 @@ class Module extends \Aurora\System\Module\AbstractModule
     {
         \Aurora\System\Api::checkUserRoleIsAtLeast(\Aurora\System\Enums\UserRole::Anonymous);
 
-        $aAuthData = self::Decorator()->Login($Login, $Password);
+        $aAuthData = $this->Authenticate($Login, $Password);
 
         $mResult = CoreModule::Decorator()->SetAuthDataAndGetAuthToken($aAuthData);
 
         return $mResult;
     }
 
-    public function Login($Login, $Password)
+    public function Authenticate($Login, $Password)
     {
         $sIp = \Aurora\System\Utils::getClientIp();
         CoreModule::Decorator()->IsBlockedUser($Login, $sIp);
@@ -131,7 +131,7 @@ class Module extends \Aurora\System\Module\AbstractModule
         $bAllowLoginFromCoreModule = $this->oModuleSettings->AllowLoginFromCoreModule;
         $oSettings = &\Aurora\System\Api::GetSettings();
         if ($bAllowLoginFromCoreModule && $aArgs['Login'] === $oSettings->AdminLogin) {
-            $mResult = $this->Login($aArgs['Login'], $aArgs['Password']);
+            $mResult = $this->Authenticate($aArgs['Login'], $aArgs['Password']);
             return true;
         }
     }
