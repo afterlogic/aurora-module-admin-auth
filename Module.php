@@ -56,7 +56,7 @@ class Module extends \Aurora\System\Module\AbstractModule
         $this->subscribeEvent('CheckAccountExists', array($this, 'onCheckAccountExists'));
         $this->subscribeEvent('System::RunEntry::before', array($this, 'onBeforeRunEntry'));
 
-        $this->denyMethodCallByWebApi('Login');
+        $this->denyMethodCallByWebApi('Authenticate');
     }
 
     public function LoginAsSuperadmin($Login, $Password)
